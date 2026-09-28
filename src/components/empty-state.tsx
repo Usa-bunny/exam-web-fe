@@ -1,6 +1,8 @@
+"use client";
+
 import { FolderOpenIcon } from "@phosphor-icons/react";
 
-const EmptyState = ({ message = "Tidak ada data ditemukan" }:{message: string}) => {
+const EmptyState = ({ message = "Tidak ada data ditemukan" }:{message?: string}) => {
     return (
         <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
             <div className="bg-[#F8F9FC] p-4 rounded-full mb-4">
