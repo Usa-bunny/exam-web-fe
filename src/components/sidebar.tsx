@@ -1,98 +1,169 @@
-"use client"
+"use client";
 
-import { MENU_DATA, MenuItem } from "@/config/menu";
+import { useEffect, useRef, useState } from "react";
+import { DotsThreeVerticalIcon, SignOutIcon } from "@phosphor-icons/react";
+import { MENU_DATA } from "@/config/menu";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/context/AuthContext";
+import Modal from "./modal";
+import LogoutConfirmation from "@/pages/auth/logout-confirmation";
+import { useDisclosure } from "@/hooks/useDisclosure";
+import { getInitials } from "@/utils/getInitials";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const Sidebar = ({ isOpen = true }: { isOpen: boolean }) => {
+  const auth = useAuth();
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const logoutModal = useDisclosure();
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  const role = auth?.user?.role || "student";
+  const menuItems = MENU_DATA[role] || [];
+
   const pathName = usePathname();
-  const menuItems = MENU_DATA.admin;
   const colorLogo = "/color-logo.svg";
 
+  useEffect(() => {
+    const handleClickOutside = (e: any) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setShowProfileMenu(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   return (
-    <aside
-      data-state={isOpen ? "expanded" : "collapsed"}
-      data-variant="inset"
-      className={`
+    <>
+      <aside
+        data-state={isOpen ? "expanded" : "collapsed"}
+        data-variant="inset"
+        className={`
         fixed inset-y-4 left-4 z-50 w-70 bg-white rounded-4xl flex flex-col p-6
         transition-all duration-300 ease-in-out peer
         lg:fixed lg:top-6 lg:left-6 lg:z-auto lg:h-[calc(100vh-48px)] lg:translate-x-0
         ${isOpen ? "translate-x-0" : "-translate-x-[calc(100%+2rem)] lg:translate-x-0"}
         `}
-    >
-      <div className="flex items-center justify-start gap-3 mb-10 pr-6">
-        <Image
-          width={10}
-          height={10}
-          src={colorLogo}
-          alt="Web Ujian"
-          className="w-10 h-10 object-contain"
-        />
-        <div className="flex flex-col">
-          <span className="font-bold text-[#344054] text-lg leading-tight whitespace-nowrap">
-            Web Ujian
-          </span>
-          <span className="font-bold text-[#344054] text-lg leading-tight whitespace-nowrap">
-            Online Sekolah
-          </span>
+      >
+        <div className="flex items-center justify-start gap-3 mb-10 pr-6">
+          <Image
+            width={10}
+            height={10}
+            src={colorLogo}
+            alt="Web Ujian"
+            className="w-10 h-10 object-contain"
+          />
+          <div className="flex flex-col">
+            <span className="font-bold text-[#344054] text-lg leading-tight whitespace-nowrap">
+              Web Ujian
+            </span>
+            <span className="font-bold text-[#344054] text-lg leading-tight whitespace-nowrap">
+              Online Sekolah
+            </span>
+          </div>
         </div>
-      </div>
 
-      <div className="flex flex-col gap-1 flex-1 overflow-y-auto pr-2">
-        <span className="text-[12px] font-bold text-[#98a2b3] tracking-widest uppercase mb-2 px-3">
-          Menu
-        </span>
-        {menuItems.map((item, index) => {
-          const isActive = pathName === item.path;
+        <div className="flex flex-col gap-1 flex-1 overflow-y-auto pr-2">
+          <span className="text-[12px] font-bold text-[#98a2b3] tracking-widest uppercase mb-2 px-3">
+            Menu
+          </span>
+          {menuItems.map((item, index) => {
+            const isActive = pathName === item.path;
 
-          return (
-            <Link
-              key={index}
-              href={item.path}
-              className={cn(
-                "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group",
-                isActive
-                  ? "bg-[#F1F6FE] text-[#3a46f7] font-medium"
-                  : "text-[#344054] hover:bg-gray-50 hover:text-black font-normal",
-              )}
-            >
-              <item.icon
-                size={20}
-                weight={isActive ? "fill" : "regular"}
-                className={
+            return (
+              <Link
+                key={index}
+                href={item.path}
+                className={cn(
+                  "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group",
                   isActive
-                    ? "text-[#3a46f7]"
-                    : "text-[#667085] group-hover:text-[#344054]"
-                }
-              />
-              <span>{item.title}</span>
-            </Link>
-          );
-        })}
-      </div>
+                    ? "bg-[#F1F6FE] text-[#3a46f7] font-medium"
+                    : "text-[#344054] hover:bg-gray-50 hover:text-black font-normal",
+                )}
+              >
+                <item.icon
+                  size={20}
+                  weight={isActive ? "fill" : "regular"}
+                  className={
+                    isActive
+                      ? "text-[#3a46f7]"
+                      : "text-[#667085] group-hover:text-[#344054]"
+                  }
+                />
+                <span>{item.title}</span>
+              </Link>
+            );
+          })}
+        </div>
 
-      <div className="mt-auto pt-6 border-t border-[#e4e7ec]">
-        <div className="relative overflow-hidden rounded-2xl min-h-19 bg-[#435EFE]">
-          <div className="relative z-10 flex items-center justify-between px-4 py-4 h-full">
-            <div className="flex items-center gap-3 ">
-              <div className="w-10 h-10 shrink-0 rounded-full border-2 border-white/20 overflow-hidden bg-white/10 backdrop-blur-sm flex items-center justify-center text-white font-bold text-sm">
-                AD
+        <div
+          className="mt-auto pt-6 border-t border-[#e4e7ec] relative"
+          ref={menuRef}
+        >
+          {showProfileMenu && (
+            <div className="absolute bottom-full left-0 w-full z-50 animate-in fade-in slide-in-from-bottom-2 duration-200 mb-2">
+              <div className="bg-white rounded-xl border border-gray-100 shadow-xl overflow-hidden p-1.5">
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    logoutModal.open();
+                    setShowProfileMenu(false);
+                  }}
+                  className="w-full cursor-pointer flex items-center gap-3 px-3 py-2.5 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors group"
+                >
+                  <SignOutIcon
+                    size={18}
+                    weight="bold"
+                    className="text-red-500 group-hover:scale-110 transition-transform"
+                  />
+                  <span className="font-medium">Keluar Aplikasi</span>
+                </button>
               </div>
-              <div className="flex flex-col min-w-0">
-                <span className="text-white font-semibold text-sm leading-tight truncate max-w-27.5">
-                  Admin Tutorial
-                </span>
-                <span className="text-white/70 text-[12px] capitalize">
-                  Admin
-                </span>
+            </div>
+          )}
+
+          <div className="relative overflow-hidden rounded-2xl h-19 bg-[#435EFE]">
+            <div className="relative z-10 flex items-center justify-between px-4 py-4 h-full">
+              <div className="flex items-center gap-3 ">
+                <div className="w-10 h-10 shrink-0 rounded-full border-2 border-white/20 overflow-hidden bg-white/10 backdrop-blur-sm flex items-center justify-center text-white font-bold text-sm">
+                  {getInitials(auth?.user?.name)}
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-white font-semibold text-sm leading-tight truncate max-w-27.5">
+                    {auth?.user?.name}
+                  </span>
+                  <span className="text-white/70 text-[12px] capitalize">
+                    {auth?.user?.role}
+                  </span>
+                </div>
               </div>
+              <button
+                onClick={() => setShowProfileMenu(!showProfileMenu)}
+                className={cn(
+                  "p-1.5 cursor-pointer rounded-lg transition-all duration-200",
+                  showProfileMenu
+                    ? "bg-white text-black scale-105 shadow-md"
+                    : "bg-white/10 text-white hover:bg-white hover:text-black",
+                )}
+              >
+                <DotsThreeVerticalIcon size={20} weight="bold" />
+              </button>
             </div>
           </div>
         </div>
-      </div>
-    </aside>
+      </aside>
+      <Modal isOpen={logoutModal.isOpen} onClose={logoutModal.close}>
+        <LogoutConfirmation
+          onClose={logoutModal.close}
+          onConfirm={() => {
+            logoutModal.close();
+            auth?.logout()
+          }}
+        />
+      </Modal>
+    </>
   );
 };
 

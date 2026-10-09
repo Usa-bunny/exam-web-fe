@@ -4,7 +4,7 @@ import { ListIcon } from "@phosphor-icons/react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Fragment } from "react";
+import { Fragment, useEffect, useState } from "react";
 
 export interface HeaderProps {
   onMenuClick?: () => void;
@@ -16,15 +16,76 @@ export interface BreadcrumbItem {
 }
 
 const Header = ({ onMenuClick }: HeaderProps) => {
-  const pathName = usePathname();
+  const pathname = usePathname();
   const whiteLogo = "/logo.svg";
 
-  const getBreadCrumbs = () => {
-    const crumbs: BreadcrumbItem[] = [{ label: "Menu", path: "/" }];
+  const [examTitle, setExamTitle] = useState<string>("Detail Ujian");
 
-    if (pathName && pathName.includes("/")) {
-      crumbs.push({ label: "Home" });
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedTitle = sessionStorage.getItem("currentExamTitle");
+      if (storedTitle) {
+        setExamTitle(storedTitle);
+      }
     }
+  }, [pathname]);
+
+  const getBreadCrumbs = (): BreadcrumbItem[] => {
+    const crumbs: BreadcrumbItem[] = [{ label: "Menu", path: "/dashboard" }];
+    const path = pathname || "";
+
+    if (path.includes("/dashboard")) {
+      crumbs.push({ label: "Dashboard" });
+    } else if (path.includes("/users")) {
+      crumbs.push({ label: "Kelola Pengguna", path: "/users" });
+      if (path.includes("/create")) crumbs.push({ label: "Tambah Pengguna" });
+      if (path.includes("/edit")) crumbs.push({ label: "Edit Pengguna" });
+    } else if (path.includes("/courses")) {
+      crumbs.push({ label: "Kelola Kursus", path: "/courses" });
+      if (path.includes("/create")) crumbs.push({ label: "Tambah Kursus" });
+      if (path.includes("/edit")) crumbs.push({ label: "Edit Kursus" });
+    } else if (path.includes("/active-exams")) {
+      if (path.includes("/active-exams/detail/")) {
+        crumbs.push({ label: "Ujian Saya", path: "/active-exams" });
+        crumbs.push({ label: examTitle });
+      } else {
+        crumbs.push({ label: "Ujian Saya" });
+      }
+    } else if (path.includes("/monitor")) {
+      crumbs.push({ label: "Monitor Ujian" });
+    } else if (path.includes("/exams")) {
+      crumbs.push({ label: "Manajemen Ujian", path: "/exams" });
+      if (path.includes("/create")) crumbs.push({ label: "Tambah Ujian" });
+      if (path.includes("/edit")) crumbs.push({ label: "Edit Ujian" });
+      if (path.includes("/questions")) crumbs.push({ label: "Kelola Soal" });
+    } else if (path.includes("/question-bank")) {
+      crumbs.push({ label: "Bank Soal", path: "/question-bank" });
+      const courseIdMatch = path.match(/\/question-bank\/(\d+)/);
+      if (courseIdMatch) {
+        crumbs.push({
+          label: "Kelola Soal",
+          path: `/question-bank/${courseIdMatch[1]}`,
+        });
+      }
+      if (path.includes("/create")) crumbs.push({ label: "Tambah Soal" });
+      if (path.includes("/edit")) crumbs.push({ label: "Edit Soal" });
+    } else if (path.includes("/history")) {
+      if (path.includes("/history/detail/")) {
+        crumbs.push({ label: "Riwayat & Hasil", path: "/history" });
+        crumbs.push({ label: examTitle });
+        crumbs.push({ label: "Hasil Ujian" });
+      } else {
+        crumbs.push({ label: "Riwayat & Hasil" });
+      }
+    } else if (path.includes("/results")) {
+      if (path.includes("/results/correction/")) {
+        crumbs.push({ label: "Hasil & Evaluasi", path: "/results" });
+        crumbs.push({ label: "Detail Koreksi" });
+      } else {
+        crumbs.push({ label: "Hasil & Evaluasi" });
+      }
+    }
+
     return crumbs;
   };
 
@@ -36,8 +97,8 @@ const Header = ({ onMenuClick }: HeaderProps) => {
       <div className="w-full bg-[#435EFE] h-14 rounded-[18px] flex items-center justify-between px-6 shadow-[0_8px_20px_-6px_rgba(67,94,254,0.3)]">
         <div className="lg:hidden flex items-center gap-3">
           <Image
-            width={7}
-            height={7}
+            width={28}
+            height={28}
             src={whiteLogo}
             alt="Logo"
             className="w-7 h-7 object-contain"

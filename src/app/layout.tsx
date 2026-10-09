@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { DM_Sans, DM_Mono } from "next/font/google";
 import QueryProvider from "@/providers/QueryProvider";
-import Layout from "@/layouts/layout"
+import { AuthProvider } from "@/context/AuthContext";
 import "./globals.css";
 
 const dmSans = DM_Sans({
@@ -34,7 +34,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col font-sans">
         <QueryProvider>
-          <Layout>{children}</Layout>
+          <AuthProvider>{children}</AuthProvider>
         </QueryProvider>
       </body>
     </html>
