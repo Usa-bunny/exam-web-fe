@@ -1,6 +1,6 @@
 "use client"
 
-import DashboardAdmin from "@/pages/dashboard/dashboard-admin";
+import DashboardAdmin from "@/components/dashboard/dashboard-admin";
 import { useAuth } from "@/context/AuthContext";
 
 export default function DashboardPage() {

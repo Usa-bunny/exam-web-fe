@@ -1,22 +1,22 @@
-"use client"
+"use client";
 
 import { useAuth } from "@/context/AuthContext";
-import LoginForm from "@/pages/auth/login-form";
+import LoginForm from "@/components/auth/login-form";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 export default function LoginPage() {
   const auth = useAuth();
-    const router = useRouter();
-    const authDecoration = "/auth-decoration.png";
-    const whiteLogo = "/logo.svg";
-    const dashboardAdmin = "/dashboard-admin.png";
-  
-    useEffect(() => {
-      if (!auth?.loading && auth?.user) {
-        router.replace("/dashboard");
-      }
-    }, [auth?.user, auth?.loading, router]);
+  const router = useRouter();
+  const authDecoration = "/auth-decoration.png";
+  const whiteLogo = "/logo.svg";
+  const dashboardAdmin = "/dashboard-admin.png";
+
+  useEffect(() => {
+    if (!auth?.loading && auth?.user) {
+      router.replace("/dashboard");
+    }
+  }, [auth?.user, auth?.loading, router]);
 
   return (
     <div className="h-screen w-full flex bg-white">

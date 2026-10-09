@@ -11,6 +11,7 @@ import AverageScoreChart from "./average-score";
 import MetricCard from "./metric-card";
 import UserComposition from "./user-composition";
 import { useAdminStats } from "@/hooks/useDashboard";
+export const dynamic = "force-dynamic";
 
 const DashboardAdmin = () => {
   const { data: stats, isLoading, error } = useAdminStats();

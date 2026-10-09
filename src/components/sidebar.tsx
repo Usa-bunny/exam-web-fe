@@ -6,7 +6,7 @@ import { MENU_DATA } from "@/config/menu";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
 import Modal from "./modal";
-import LogoutConfirmation from "@/pages/auth/logout-confirmation";
+import LogoutConfirmation from "@/components/auth/logout-confirmation";
 import { useDisclosure } from "@/hooks/useDisclosure";
 import { getInitials } from "@/utils/getInitials";
 import Image from "next/image";
@@ -159,7 +159,7 @@ const Sidebar = ({ isOpen = true }: { isOpen: boolean }) => {
           onClose={logoutModal.close}
           onConfirm={() => {
             logoutModal.close();
-            auth?.logout()
+            auth?.logout();
           }}
         />
       </Modal>
