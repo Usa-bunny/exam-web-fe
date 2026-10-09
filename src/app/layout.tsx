@@ -3,6 +3,7 @@ import { DM_Sans, DM_Mono } from "next/font/google";
 import QueryProvider from "@/providers/QueryProvider";
 import { AuthProvider } from "@/context/AuthContext";
 import "./globals.css";
+import { Toaster } from "sonner";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -34,6 +35,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col font-sans">
         <QueryProvider>
+          <Toaster richColors position="top-right" />
           <AuthProvider>{children}</AuthProvider>
         </QueryProvider>
       </body>

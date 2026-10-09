@@ -6,6 +6,7 @@ import { useAuth } from "@/context/AuthContext";
 import { EyeIcon, EyeSlashIcon } from "@phosphor-icons/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -37,8 +38,13 @@ const LoginForm = () => {
     try {
       await auth.login(formData.email, formData.password);
       router.push("/dashboard");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Login failed", error);
+      toast.error(
+        error.response?.data?.message ||
+          error.message ||
+          "Login gagal. Periksa email dan password Anda",
+      );
     } finally {
       setLoading(false);
     }
