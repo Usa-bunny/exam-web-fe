@@ -19,11 +19,9 @@ const StudentManagement = () => {
 
   const handleBack = () => router.push("/courses");
 
-  // Fetch student list
   const { data: studentsData } = useUsersList({ role: "student", limit: 100 });
   const students = studentsData?.data || [];
 
-  // Fetch course details
   const { data: courseDetail, isLoading: loading } = useCourseDetail(id);
 
   const updateCourseMutation = useUpdateCourse();
