@@ -73,7 +73,7 @@ export const examService = {
     const response = await api.patch("/answers/correct", data);
     return response.data;
   },
-  getActiveExams: async (params: any) => {
+  getActiveExams: async (params?: any) => {
     const response = await api.get("/exams/active", { params });
     return response.data;
   },
