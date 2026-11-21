@@ -110,7 +110,7 @@ export const useQuestionDetail = (id: any, enabled = true) => {
 export const useCreateQuestion = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data) => questionService.create(data),
+    mutationFn: (data:any) => questionService.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["questions"] });
       queryClient.invalidateQueries({ queryKey: ["questions-course"] });

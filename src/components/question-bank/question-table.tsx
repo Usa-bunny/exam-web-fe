@@ -1,0 +1,95 @@
+import { PencilSimpleLine, TrashSimple } from "@phosphor-icons/react";
+import Table from "@/components/table";
+import Button from "@/components/button";
+import Badge from "@/components/badge";
+
+const QuestionTable = ({
+  questions = [],
+  currentPage = 1,
+  limit = 10,
+  onEdit,
+  onDelete,
+}: {
+  questions: any[];
+  currentPage: number;
+  limit: number;
+  onEdit: (row: any) => void;
+  onDelete: (row: any) => void;
+}) => {
+  const columns = [
+    {
+      header: "No",
+      render: (row: any) =>
+        (currentPage - 1) * limit + questions.indexOf(row) + 1,
+      className: "w-[60px] text-gray-500",
+    },
+    {
+      header: "Daftar Pertanyaan",
+      render: (row: any) => (
+        <div className="flex flex-col">
+          <span className="font-medium text-[#344054] line-clamp-2">
+            {row.question_text || row.question || "-"}
+          </span>
+        </div>
+      ),
+    },
+    {
+      header: "Tipe Soal",
+      render: (row: any) => {
+        const displayType =
+          row.type === "multiple_choice" ? "Pilihan Ganda" : "Esai";
+        return (
+          <div className="flex justify-start">
+            <Badge variant="primary">{displayType}</Badge>
+          </div>
+        );
+      },
+    },
+    {
+      header: "Ujian Tertaut",
+      render: (row: any) => (
+        <div className="flex justify-start">
+          <Badge variant="primary">{row.total_exams || 0} Ujian</Badge>
+        </div>
+      ),
+    },
+  ];
+
+  return (
+    <div className="[&>div]:border-0 [&>div]:shadow-none [&>div]:rounded-none">
+      <Table
+        columns={columns}
+        data={questions}
+        renderActions={(row, closeMenu) => (
+          <div className="flex flex-col">
+            <Button
+              variant="ghost"
+              className="justify-start! rounded-none! h-10 px-4 gap-2.5"
+              onClick={() => {
+                onEdit?.(row);
+                closeMenu();
+              }}
+            >
+              <PencilSimpleLine size={18} className="text-gray-500" />
+              <span className="font-medium text-gray-700">Edit Soal</span>
+            </Button>
+            <div className="border-t border-gray-100" />
+            <Button
+              variant="ghostDestructive"
+              className="justify-start! rounded-none! h-10 px-4 gap-2.5"
+              onClick={() => {
+                onDelete?.(row);
+                closeMenu();
+              }}
+            >
+              <TrashSimple size={18} />
+              <span className="font-medium">Delete Soal</span>
+            </Button>
+          </div>
+        )}
+      />
+    </div>
+  );
+};
+
+export default QuestionTable;
