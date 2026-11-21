@@ -9,7 +9,7 @@ import FinishConfirmation from "@/components/exam/session/finish-confirmation";
 import ExitAlert from "@/components/exam/session/exit-alert";
 import Modal from "@/components/modal";
 
-export default function ExamWorkspace() {
+export default function ExamWorkspacePage() {
   const {
     exam,
     questions,
